@@ -4,16 +4,16 @@ from player import Player
 
 # Initialize instance of quiz, storage, players class
 quiz = Quiz()
-storage = Storage()
+# storage = Storage()
 player = Player()
 
 # JH: Create the Storage class.
 # .getQuestions() should read questions from the txt file.
 # .getQuestions() should return a list? of Question objects
-questions = storage.getQuestions()
+# questions = storage.getQuestions()
 
 # SetQuestions expects a list? of Question objects.
-quiz.SetQuestions(questions)
+# quiz.SetQuestions(questions)
 
 # Broderick: Create the Player class. 
 # .getPlayers() should prompt users for player information
@@ -21,7 +21,7 @@ quiz.SetQuestions(questions)
 players = player.getPlayers()
 
 # LoadPlayers expects a list? of Player objects.
-quiz.LoadPlayers(players)
+# quiz.LoadPlayers(players)
 
 # James: Begin the quiz
-quiz.play()
+# quiz.play()

@@ -1,4 +1,4 @@
-import Quiz
+# import Quiz
 
 class Storage():
     def __init__(self, name, age):
