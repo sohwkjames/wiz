@@ -10,7 +10,7 @@ class Storage():
         Question is stored in questions.txt file
         Might want to store different quiz in different file in the future
         '''
-
+    
         
         f = open("/questions.txt")
         questionlist = []

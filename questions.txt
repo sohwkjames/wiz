@@ -1,0 +1,2 @@
+"Here is a sample mcq qn, with some puncuation!!" | mcq | "this is choice 1, nice" , "ntu" , "smu" , "sutd" | 1
+"sun is blue" | "tf" | 0
