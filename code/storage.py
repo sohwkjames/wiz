@@ -1,18 +1,14 @@
-import Quiz
+from quiz import Quiz
 
 class Storage():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
     
-    def getQuestions():
+    
+    def getQuestions(self):
         '''
         Question is stored in questions.txt file
         Might want to store different quiz in different file in the future
         '''
-    
-        
-        f = open("/questions.txt")
+        f = open("questions.txt")
         questionlist = []
         for x in f:
             question_type = x.split("|")
@@ -24,9 +20,8 @@ class Storage():
             elif question_type[1] == "tf":
                 answer = question_type[2]
                 questionlist.append(Tfq(question, answer))
-        return questionlist
         f.close()
-
+        return questionlist
 
     def saveQuestion():
         '''
