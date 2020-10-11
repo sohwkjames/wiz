@@ -8,7 +8,7 @@ class Storage():
         Question is stored in questions.txt file
         Might want to store different quiz in different file in the future
         '''
-        f = open("questions.txt")
+        f = open("/questions.txt")
         questionlist = []
         for x in f:
             question_type = x.split("|")
@@ -23,11 +23,20 @@ class Storage():
         f.close()
         return questionlist
 
-    def saveQuestion():
+    def saveQuestion(self, question):
         '''
         Save question into the questions.txt file
         '''
-        x = 6
+        f = open("/question.txt", "w")
+        for x in question:
+            if "mcq" == "mcq": #will edit it after quiz has been finallise
+                text = "question" + " | mcq | " + "Choice, choice, choice" + " | " + "answer"
+            elif "tf" == "tf": #will edit it after quiz has been finallise
+                text = "question" + " | tf | " + "answer"
+        f.write(text+"\n")
+        f.close()
+        
+
 
 
 
