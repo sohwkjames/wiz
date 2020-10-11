@@ -8,7 +8,7 @@ class Storage():
         Question is stored in questions.txt file
         Might want to store different quiz in different file in the future
         '''
-        f = open("/questions.txt")
+        f = open("/questions.txt") #do we open the python file from 1 file before code or from code folder?
         questionlist = []
         for x in f:
             question_type = x.split("|")
