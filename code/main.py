@@ -13,15 +13,21 @@ player = Player()
 questions = storage.getQuestions()
 
 # SetQuestions expects a list? of Question objects.
-quiz.SetQuestions(questions)
+quiz.setQuestions(questions)
 
 # Broderick: Create the Player class. 
 # .getPlayers() should prompt users for player information
 # .getPlayers() should return a list? of Player objects.
-players = player.getPlayers()
+#players = player.getPlayers()
 
-# LoadPlayers expects a list? of Player objects.
-quiz.LoadPlayers(players)
+# setPlayers expects a list? of Player objects.
+# Temporary method to generate players for demo.
+player_arr = []
+for v in ["James", "JH", "Broderick"]:
+    p = Player()
+    p.name = v
+    player_arr.append(p)
+quiz.setPlayers(player_arr)
 
 # James: Begin the quiz
 quiz.play()
