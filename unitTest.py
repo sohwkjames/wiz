@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from code import quiz
 
 s = "is the sun hot?"
@@ -9,7 +8,6 @@ s = "what school are we in"
 choices = ['nus', 'ntu', 'smu', 'sutd']
 ans = 1
 Mcq = quiz.Mcq(s, ans, choices)
-=======
 from code import quiz, storage, player
 import unittest
 
@@ -34,4 +32,3 @@ class TestStorageMethods(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
->>>>>>> 8119624b7ee4fef67b84d45cd2c2b1415d2b4042
