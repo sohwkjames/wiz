@@ -11,8 +11,10 @@ class Storage():
         questionlist = []
         for x in f:
             question_type = x.split("|")
+
             question = question_type[0].strip(" \"")
             print(question_type[1].strip(""))
+            question = question_type[0]
             if question_type[1].strip() == "mcq":
                 choice = question_type[2].split(",")
                 answer = question_type[3]
@@ -36,5 +38,4 @@ class Storage():
         f.write(text+"\n")
         f.close()
         
-
 
