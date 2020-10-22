@@ -18,16 +18,18 @@ quiz.setQuestions(questions)
 # Broderick: Create the Player class. 
 # .getPlayers() should prompt users for player information
 # .getPlayers() should return a list? of Player objects.
+def temp_generate_players():
+    player_list = []
+    names = ['james', 'broderick', 'jh']
+    for i, v in enumerate(names):
+        p = Player()
+        p.name = v
+        player_list.append(p)
+    return player_list
 #players = player.getPlayers()
 
 # setPlayers expects a list? of Player objects.
-# Temporary method to generate players for demo.
-player_arr = []
-for v in ["James", "JH", "Broderick"]:
-    p = Player()
-    p.name = v
-    player_arr.append(p)
-quiz.setPlayers(player_arr)
+quiz.setPlayers(temp_generate_players())
 
 # James: Begin the quiz
 quiz.play()

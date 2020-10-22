@@ -7,7 +7,7 @@ class Question():
     '''
     def __init__(self, questiontext, answer):
         self.questiontext = questiontext
-        self.answer = answer
+        self.answer = int(answer)
 
 class Tfq(Question):
     '''
@@ -15,7 +15,14 @@ class Tfq(Question):
     '''
     # True false questions just need questiontext and answer. answer: 1 if true, 0 if false.
     def __repr__(self):
-        return self.questiontext
+        return self.questiontext + "\n 1. True 0. False"
+    
+    def renderAnswer(self):
+        # Returns a string.
+        if self.answer == 1:
+            return ("The correct answer is true")
+        else:
+            return ("The correct answer is false")
 
 class Mcq(Question):
     '''
@@ -24,13 +31,18 @@ class Mcq(Question):
     def __init__(self, questiontext, answer, choices):
         super().__init__(questiontext, answer)
         # choices should be a list of strings. eg: ["this is choice 1, nice", "c2", "c3" , "c4"]
-        self.choices = []
+        self.choices = choices
     
     def __repr__(self):
         s = self.questiontext + "\n"
-        for idx, choice in enumerate(self.choices):
-            s += idx + ". " + choice + "\n"
+        print(self.choices)
         return s
+
+    def renderAnswer(self):
+        idx_to_print = int(self.answer) + 1
+        text_to_print = self.choices[self.answer]
+        result = str(idx_to_print) + ". " + text_to_print
+        return "The correct answer is {}".format(result)
     
 class Quiz():
 
@@ -57,21 +69,30 @@ class Quiz():
         remove question from self.questions after question is asked.
         '''
         if self.questions is None:
-            print("self.questions is none")
+            print("Quiz ended! Here are the final scores")
+            self.displayScores()
             return False
         qn = self.questions.pop()
         print(qn)
+        print("")
+        # Get all players answers
         for player in self.players:
             player_response = input("{} What is your answer? Please enter an integer".format(player.name))
             if player_response == qn.answer:
                 player.score += 1
+        # Print correct answer and show current scores
+        print("")
+        print(qn.renderAnswer())
+        
         return True
 
 
     def play(self):
         print("Game started!")
         while self.questions:
+            print("----")
             self.playRound()
+            
 
 
 
