@@ -12,9 +12,13 @@ class Storage():
         for x in f:
             question_type = x.split("|")
             question = question_type[0].strip(" \"")
-            print(question_type[1].strip(""))
             if question_type[1].strip() == "mcq":
-                choice = question_type[2].split(",")
+                choice = question_type[2].split("\" , \"")
+                i = len(choice)
+                firstChoice = choice[0].split("\"")
+                choice[0] = firstChoice[1]
+                lastChoice = choice[i-1].split("\"")
+                choice[i-1] = lastChoice[0]
                 answer = question_type[3]
                 questionlist.append(quiz.Mcq(question, answer, choice))
             elif question_type[1].strip() == "tf":
@@ -26,6 +30,7 @@ class Storage():
     def saveQuestion(self, question):
         '''
         Save question into the questions.txt file
+        question: list of Question() class
         '''
         f = open("/question.txt", "w")
         for x in question:
