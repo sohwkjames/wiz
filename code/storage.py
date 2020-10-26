@@ -10,16 +10,13 @@ class Storage():
         f = open("../questions.txt") #do we open the python file from 1 file before code or from code folder?
         questionlist = []
         for x in f:
-            question_type = x.split("|")
-
+            question_type = x.split(" | ")
             question = question_type[0].strip(" \"")
             if question_type[1].strip() == "mcq":
                 choice = question_type[2].split("\" , \"")
                 i = len(choice)
-                firstChoice = choice[0].split("\"")
-                choice[0] = firstChoice[1]
-                lastChoice = choice[i-1].split("\"")
-                choice[i-1] = lastChoice[0]
+                choice[0] = choice[0][1:]
+                choice[i-1] = choice[i-1][:-1]
                 answer = question_type[3]
                 questionlist.append(quiz.Mcq(question, answer, choice))
             elif question_type[1].strip() == "tf":
