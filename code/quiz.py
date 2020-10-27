@@ -2,8 +2,9 @@
 class Question():
     '''
     questiontext is a string. eg 'what color is the moon?'
-    answer is an integer, pointing to the index of the correct answer. 
-    question choices will be an attribute in the child clases.
+    answer is an integer. Indicates the correct answer for a question.
+            For true false questions, 1 indicates true, 0 indicates 0.
+            For Multiple choice questions, 1 indicates the first choice, 2 the second choice etc.
     '''
     def __init__(self, questiontext, answer):
         self.questiontext = questiontext
@@ -35,12 +36,15 @@ class Mcq(Question):
     
     def __repr__(self):
         s = self.questiontext + "\n"
-        print(self.choices)
+        for idx, val in enumerate(self.choices):
+            s = s + str(idx+1) + ". " + self.choices[idx] + " "       
+        
         return s
 
     def renderAnswer(self):
-        idx_to_print = int(self.answer) + 1
-        text_to_print = self.choices[self.answer]
+        # 
+        idx_to_print = int(self.answer) 
+        text_to_print = self.choices[self.answer-1] 
         result = str(idx_to_print) + ". " + text_to_print
         return "The correct answer is {}".format(result)
     
@@ -62,6 +66,27 @@ class Quiz():
         for player in playerList:
             self.players.append(player)
 
+    def checkValidResponse(self,response, question):
+        '''
+        Returns true or false.
+        '''
+        try:
+            response = int(response)
+        except ValueError:
+            print("Sorry, please enter an integer")
+            return False
+        # if tfq, check if input is 1 or 0.
+        if type(question) == Tfq:
+            valid_responses = [0,1]
+        if type(question) == Mcq:
+            valid_responses = range(1, len(question.choices)+1)
+        if response not in valid_responses:
+            print("Please enter a number in the range of the valid answers.")
+            return False        
+        return True
+            
+        
+
     def playRound(self):
         '''
         Plays one round of the quiz. 
@@ -69,16 +94,18 @@ class Quiz():
         remove question from self.questions after question is asked.
         '''
         if self.questions is None:
-            print("Quiz ended! Here are the final scores")
-            self.displayScores()
             return False
         qn = self.questions.pop()
         print(qn)
         print("")
         # Get all players answers
         for player in self.players:
-            player_response = input("{} What is your answer? Please enter an integer".format(player.name))
-            if player_response == qn.answer:
+            while True:
+                player_response = input("{} What is your answer? Please enter an integer ".format(player.name))
+                # Check if player response is valid.
+                if self.checkValidResponse(player_response, qn):
+                    break    
+            if int(player_response) == int(qn.answer):
                 player.score += 1
         # Print correct answer and show current scores
         print("")
@@ -86,13 +113,36 @@ class Quiz():
         
         return True
 
+    def printScores(self):
+        '''
+        prints the scores of all the players in the game currently.
+        '''
+        print("Current scores: ")
+        for p in self.players:
+            print ("{}: {}".format(p.name, p.score))
+
+    def printWinners(self, n):
+        '''returns a list of n winners.'''
+        tmp = sorted(self.players, key=lambda x: x.score, reverse=True)
+        i = 0
+        result = []
+        # get top 3 players in the result array, or the top n players if less than 3 players.
+        while i < len(self.players) or i < n:
+            result.append(tmp[i])
+            i+=1
+        for player in result:
+            print("{}: {}".format(player.name, player.score))
 
     def play(self):
         print("Game started!")
         while self.questions:
             print("----")
             self.playRound()
-            
+            self.printScores()
+        # Handle game ending.
+        print("Game has ended! Here are the winners")
+        self.printWinners(3)
+                    
 
 
 
