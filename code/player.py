@@ -32,14 +32,3 @@ class Player():
             player_count = player_count + 1
             continue
         return player_list
-
-
-        else:
-            for line in player_list_check:
-                if player_name in line:
-                    
-                    print("Player Name taken, Please try again")
-                    break
-                else:
-                    player_list_append.write(player_name)
-                    player_list_append.write("\n")
