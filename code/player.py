@@ -21,6 +21,7 @@ class Player():
         else:
             for line in player_list_check:
                 if player_name in line:
+                    
                     print("Player Name taken, Please try again")
                     break
                 else:
