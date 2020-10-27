@@ -1,5 +1,9 @@
 class Player():
-    def getPlayers(cls):
+    def __init__(self):
+        self.name = ""
+        self.score = 0
+
+    def getPlayers(self, cls):
         '''  method to ask user for player name, if player name is Quit then leave.
              Dictionary of playername.storage is checked on existing users. If user
              does not exist he/ she is added.
