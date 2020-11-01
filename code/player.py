@@ -10,8 +10,8 @@ class Player():
         '''
         player_name = ''
         player_list = []
-        player_list_check = open("Username.txt", "r")
-        player_list_append = open("Username.txt", "a")
+        player_list_check = open("../Username.txt", "r")
+        player_list_append = open("../Username.txt", "a")
         quit = False
         player_count = 1
         player_number = int(input('Welcome, how many players:'))
@@ -28,7 +28,10 @@ class Player():
                 break
             player_list_append.write(player_name)
             player_list_append.write("\n")
-            player_list.append(player_name)
+            tmp = Player()
+            tmp.name = player_name
+            player_list.append(tmp)
+            
             player_count = player_count + 1
             continue
         return player_list
