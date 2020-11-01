@@ -26,7 +26,10 @@ def temp_generate_players():
         p.name = v
         player_list.append(p)
     return player_list
+
+
 #players = player.getPlayers()
+#quiz.setPlayers(players)
 
 # setPlayers expects a list? of Player objects.
 quiz.setPlayers(temp_generate_players())
