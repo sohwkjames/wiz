@@ -1,21 +1,16 @@
 # wiz
 The best quiz program in Singapore
 
-# instructions
+## Requirements
 
+Python3
 
-# question.txt
-Mcq question's choices are to be quoted and spilt up with a space follow by a comma and finally another space
-e.g. "red" , "yellow" , "blue"
+## Installation steps
 
-Each question group shall be spilt by Question | type | depends on question type
+1. Clone this repository onto your local machine.
 
-mcq type:
-1) Question | type | choices | correct answer
-2) Mcq choices are to be quoted and spilt up with a space follow by a comma and finally another space
-e.g. "What color is the sun?" | mcq | "blue" , "black" , "green" , "red" | 4
+2. Open a terminal, and change into the /code directory.
 
-e.g. tf type:
-1) Question | type | correct answer
-2) True is 1, False is 0
-"Is grass green?" | tf | 1
+3. In your terminal, enter `python3 main.py`
+
+4. The quiz game will begin! Follow the in game instructions and have fun.
