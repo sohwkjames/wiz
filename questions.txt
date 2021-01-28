@@ -1,3 +1,0 @@
-"What color is the sun?" | mcq | "blue" , "black" , "green" , "red" | 4
-"Is grass green?" | tf | 1
-"Coca cola is a healthy drink" | tf | 0
