@@ -39,8 +39,8 @@ class Mcq(Question):
         return s
 
     def renderAnswer(self):
-        idx_to_print = int(self.answer) + 1
-        text_to_print = self.choices[self.answer]
+        idx_to_print = int(self.answer) - 1
+        text_to_print = self.choices[self.answer - 1]
         result = str(idx_to_print) + ". " + text_to_print
         return "The correct answer is {}".format(result)
     
