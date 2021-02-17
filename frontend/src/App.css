@@ -28,6 +28,12 @@
   color: #61dafb;
 }
 
+.questionArea{
+  color: lightskyblue;
+  align-items: right;
+  justify-content: right;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

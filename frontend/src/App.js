@@ -2,138 +2,65 @@ import logo from './logo.svg';
 import './App.css';
 import React, { Component } from 'react';
 
+// ModifiablePlayerTable
+//   Add player bar
+//   PlayerList
+//      PlayerRow
 
-function Choice(props){
-  return (
-    <button className='choice' onClick = {props.onClick}>
-      {props.value}
-    </button>
-  );
-}
 
-function Question(props){
-  return (
-    <div className='Question'>
-      {props.value}
-    </div>
-  );
-}
+// Things to compute:
+// - Maintain an array of player objects
+// - maintain an array of question objects
 
-class Player extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = { 
-      name: "temp name",
-      score: 0
-    }
-  }
-  render() {
-    return (<p>{this.state.name}</p>)
-  }
-}
-
-// All player related stuff lives inside PlayerList.
-class PlayerList extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {}
-  }
-
+class PlayerRow extends React.Component{
   render(){
-    return(
-      <div className="playerList">
-        <form>
-          <input placeholder="Enter Player Name">
-          </input>
-          <button type="submit">add</button>
-        </form>
-      </div>
-    )
+    var name = this.props.name
+    var score = this.props.score
+    return (<li>Player: {name}, Score: {score}</li>  )
   }
 }
 
-class Board extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      question: [],
-      players: []  // array of player objects. 
-    }
-  }
-
-  handleClick(i){
-    getData()
-  }
-
-  renderChoice(text){
+class PlayerList extends React.Component{
+    render() {
+    const players = this.props.players
+    const listitems = players.map((player) =>
+    <PlayerRow key={player.id} name={player.name} score={player.score}/>
+  )
     return (
-
-      <Choice
-        value={text}
-        onClick = {()=>this.handleClick()}
-      />
-    )
-  }
-
-  renderQuestion(i){
-    return (
-      <Question
-        value={i}
-      />
-    )
-  }
-  
-
-
-  renderPlayer(player){
-    return (
-      <Player/>
-    )
-  }
-
-  render(){
-    //let choices_api = ["sample_choice 1", "sample_choice 2", "sample_choice 3"]
-    return(
       <div>
-          {this.renderPlayer("abc")}
-        <div className="gameArea">
-          {this.renderQuestion("Who is the president of Singapore?")}
-          {this.renderChoice("Lee Hsien Loong")}
-          {this.renderChoice("Goh Chok Tong")}
-          {this.renderChoice("Chan Chun Sing")}
-
-        </div>
+      <p>Players:</p>
+      <ul>{listitems}</ul>
       </div>
     )
   }
 }
 
-class Game extends React.Component{
-  render(){
-    return (
-      <Board />
-      
-    )
+class ModifiablePlayerTable extends React.Component{
+  // This is the top most object, and will hold some state.
+  render() {
+
   }
 }
 
-
-function getData() {
-  fetch('https://jsonplaceholder.typicode.com/todos/1')
-  .then(response => response.json())
-  //.then(json => alert(json))
+function addPlayer(data, player){
+  data.push(player);
 }
 
+let PLAYER_DATA = [
+  {id: "1", name: "adam", score: "2"},
+  {id: "2", name: "bob", score: "3"},
+  {id: "3", name: "celia", score: "11"},
+];
 
 function App() {
   return (
-    
     <div className="App">
       <header className="App-header">
-        <PlayerList />
-        <div className="playerArea"> <Game /> </div>
-
+        <div className="playerArea"> <PlayerList players={PLAYER_DATA}/> </div>
+        <div className="questionArea">Game questions go here</div>
       </header>
+
+        
       
     </div>
   );
