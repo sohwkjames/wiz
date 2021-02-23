@@ -52,29 +52,59 @@ class PlayerList extends React.Component{
     }
 }
 
+class ChoiceButton extends React.Component{
+  render(){
+    var text = this.props.text
+    var id = this.props.id
+    var player_row;
+    if (this.props.correct_answer){
+      return (
+        <button onClick={this.props.handleClick}>{text}</button>
+      )  
+    }
+    else{
+      return (
+        <button onClick={this.props.handleClick}>{text}</button>
+      )
+    }
+  }
+}
+
 class QuestionArea extends React.Component {
 
   getQuestion(qn_number){
     // Takes a question number, calls an api, returns a questin object.
-    var qn_objects = {1: {"question_id": 1, "text": "what is 2+2?","choice1": "3","choice2": "4", "correct_answer":"4"},
-     2: {"question_id": 2, "text": "where is singapore?",
-     "choice1": "asia",
-    "choice2": "america", 
-    "correct_answer":"america"}}
+    var qn_objects = {1: {"question_id": 1, "text": "Who is the PM of Singapore",
+                      "choices":{"1": "Lee","2": "Goh", "3": "Tan"}, "correct_answer":"1"},
+                      2: {"question_id": 2, "text": "where is singapore?",
+                    "choices":{ "1": "asia",
+                    "2": "america"}, 
+                    "correct_answer":"1"}}
     return qn_objects[qn_number]
   }
-
-
 
   render() {
     const current_question = this.props.current_question
     var qn_object = this.getQuestion(current_question);
+    var choices = qn_object["choices"]
+    var correct_answer = qn_object["correct_answer"]
+    var choices_list = []
+    for (const [key, value] of Object.entries(choices)) {
+      console.log(key)
+      if (key == correct_answer) {
+        choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleRightAnswer} 
+                            correct_answer={true}/> )
+      }
+      else{
+        choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleWrongAnswer}
+                           correct_answer={false}/>)
+      }
+    }
 
     return (
       <div>
         {qn_object["text"]}
-        <button onClick={this.props.handleAddScore}>{qn_object["choice1"] }</button>
-        <button onClick={this.props.handleAddScore}>{qn_object["choice2"]}</button>
+        {choices_list}
       </div>
     )
   }
@@ -112,6 +142,10 @@ class ModifiableGameArea extends React.Component{
     this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
     this.handleStartGame = this.handleStartGame.bind(this);
     this.addPointToPlayer = this.addPointToPlayer.bind(this);
+    this.handleRightAnswer = this.handleRightAnswer.bind(this);
+    this.handleWrongAnswer = this.handleWrongAnswer.bind(this);
+    this.goNextPlayerTurn = this.goNextPlayerTurn.bind(this);
+    this.testAlert = this.testAlert.bind(this);
 
   }
 
@@ -133,13 +167,39 @@ class ModifiableGameArea extends React.Component{
     })
   }
 
-  addPointToPlayer(){
+  testAlert(){
+    alert(this.state.current_player_id);
+  }
+
+  handleWrongAnswer(){
+    alert ("wrong answer")
+    this.goNextPlayerTurn();
+  }
+
+  handleRightAnswer(){
+    alert ("handling Right answer")
+    this.addPointToPlayer();
+    this.goNextPlayerTurn();
+  }
+
+  goNextPlayerTurn(){
+    var number_of_players = this.state.players.length -1;
+    var tmp_current_player_id = this.state.current_player_id;
+    if (this.state.current_player_id >= number_of_players){
+      this.setState({current_player_id: 0,
+                     current_question: this.state.current_question +1  })
+    }
+    else{
+      this.setState({current_player_id: this.state.current_player_id + 1})
+    }
     
-    var newArray = this.state.players.slice()
-    console.log("current player id", this.props.current_player_id)
-    console.log(newArray[this.props.current_player_id] )
+  }
+
+  addPointToPlayer(){
+    var newArray = this.state.players.slice() // get a copy of the players array.
+    console.log("newArray array:")
     console.log(newArray)
-    newArray[this.props.current_player_id] ++
+    newArray[this.state.current_player_id]["score"] += 1
     this.setState({players: newArray})
   }
 
@@ -150,7 +210,8 @@ class ModifiableGameArea extends React.Component{
     let add_player_bar;
     if (game_started){
       question_area = <QuestionArea current_question={this.state.current_question}
-                        handleAddScore={this.addPointToPlayer} 
+                        handleRightAnswer={this.handleRightAnswer}
+                        handleWrongAnswer={this.handleWrongAnswer} 
                         current_player_id={this.state.current_player_id}/>
     }
     else{
