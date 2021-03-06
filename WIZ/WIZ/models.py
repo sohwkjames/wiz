@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
-    answer = models.CharField(max_length=200)
+    answer = models.IntegerField()
     pub_date = models.DateTimeField('date published')
 
     def __str__(self):
@@ -21,7 +21,7 @@ class Tfq(Question):
     '''
     # True false questions just need questiontext and answer. answer: 1 if true, 0 if false.
     def __repr__(self):
-        return self.questiontext + "\n 1. True 0. False"
+        return self.question_text + "\n 1. True 0. False"
     
     def renderAnswer(self):
         # Returns a string.
@@ -35,7 +35,7 @@ class Mcq(Question):
     Child of question class.
     '''
     def __init__(self, questiontext, answer, choices):
-        super().__init__(questiontext, answer)
+        super().__init__(question_text, answer)
         # choices should be a list of strings. eg: ["this is choice 1, nice", "c2", "c3" , "c4"]
         self.choices = choices
     
