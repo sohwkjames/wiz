@@ -163,7 +163,6 @@ class ModifiableGameArea extends React.Component{
 
   handleStartGame(){
     this.setState({game_started: true}, () => {
-      alert(this.state.game_started + "state of game")
     })
   }
 
