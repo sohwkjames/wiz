@@ -71,6 +71,16 @@ class ChoiceButton extends React.Component{
 }
 
 class QuestionArea extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      question_id: 0,
+      question_text: "tmp",
+    }
+   const current_question = this.props.current_question;
+   this.getQuestion(current_question);
+
+  }
 
   getQuestion(qn_number){
     // Takes a question number, calls an api, returns a questin object.
@@ -80,31 +90,44 @@ class QuestionArea extends React.Component {
                     "choices":{ "1": "asia",
                     "2": "america"}, 
                     "correct_answer":"1"}}
-    return qn_objects[qn_number]
+
+    return fetch("http://127.0.0.1:8000/question/2/").then(response => response.json()).then(tmp => this.questionData(tmp));
+      
+    //return qn_objects[qn_number]
+  }
+
+  questionData(qn_object){
+    console.log(qn_object["question_text"])
+    this.setState({ question_text: qn_object["question_text"] })
+
+    // all of the data from question object should be gotten from here.
+    // This function must set all the states. No state setting in render(). 
+
+    // var choices = qn_object["choices"]
+    // console.log(choices)
+    // var correct_answer = qn_object["correct_answer"]
+    // var choices_list = []
+    // for (const [key, value] of Object.entries(choices)) {
+    //   console.log(key)
+    //   if (key == correct_answer) {
+    //     choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleRightAnswer} 
+    //                         correct_answer={true}/> )
+    //   }
+    //   else{
+    //     choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleWrongAnswer}
+    //                        correct_answer={false}/>)
+    //   }
+    // }
   }
 
   render() {
-    const current_question = this.props.current_question
-    var qn_object = this.getQuestion(current_question);
-    var choices = qn_object["choices"]
-    var correct_answer = qn_object["correct_answer"]
-    var choices_list = []
-    for (const [key, value] of Object.entries(choices)) {
-      console.log(key)
-      if (key == correct_answer) {
-        choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleRightAnswer} 
-                            correct_answer={true}/> )
-      }
-      else{
-        choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleWrongAnswer}
-                           correct_answer={false}/>)
-      }
-    }
-
+    // const current_question = this.props.current_question;
+    // var qn_object = this.getQuestion(current_question);
+    
     return (
       <div>
-        {qn_object["text"]}
-        {choices_list}
+        {this.state.question_text} 
+
       </div>
     )
   }
