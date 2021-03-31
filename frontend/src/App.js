@@ -74,60 +74,64 @@ class QuestionArea extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      question_id: 0,
+      question_id: 1,
       question_text: "tmp",
+      choices_list: [],
+      correct_choice: 0,
     }
-   const current_question = this.props.current_question;
-   this.getQuestion(current_question);
+    console.log("calling questionarea consturcor")
+    let current_question = this.props.current_question;
+    this.getQuestion(current_question);
+}
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.current_question !== prevProps.current_question) {
+      this.setState({question_id: this.props.current_question})
+    }
+}
 
-  }
 
   getQuestion(qn_number){
-    // Takes a question number, calls an api, returns a questin object.
-    var qn_objects = {1: {"question_id": 1, "text": "Who is the PM of Singapore",
-                      "choices":{"1": "Lee","2": "Goh", "3": "Tan"}, "correct_answer":"1"},
-                      2: {"question_id": 2, "text": "where is singapore?",
-                    "choices":{ "1": "asia",
-                    "2": "america"}, 
-                    "correct_answer":"1"}}
+    // returns a json
+    console.log("this props current_question", this.props.current_question)
+    let url = "http://127.0.0.1:8000/question/" + qn_number + "/"
+    return fetch(url).then(response => response.json()).then(tmp => this.questionData(tmp));
 
-    return fetch("http://127.0.0.1:8000/question/2/").then(response => response.json()).then(tmp => this.questionData(tmp));
-      
-    //return qn_objects[qn_number]
   }
 
   questionData(qn_object){
-    console.log(qn_object["question_text"])
-    this.setState({ question_text: qn_object["question_text"] })
-
-    // all of the data from question object should be gotten from here.
+    // all of the data from question object should be contained in qn_object
     // This function must set all the states. No state setting in render(). 
 
-    // var choices = qn_object["choices"]
-    // console.log(choices)
-    // var correct_answer = qn_object["correct_answer"]
-    // var choices_list = []
-    // for (const [key, value] of Object.entries(choices)) {
-    //   console.log(key)
-    //   if (key == correct_answer) {
-    //     choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleRightAnswer} 
-    //                         correct_answer={true}/> )
-    //   }
-    //   else{
-    //     choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleWrongAnswer}
-    //                        correct_answer={false}/>)
-    //   }
-    // }
+    // create variables to set our qn_object
+    console.log("calling function questionData, this.props.current_question is:", this.props.current_question)
+    this.setState({ question_text: qn_object["question_text"],
+                    question_id: qn_object["id"], correct_choice: qn_object["answer"]})
+    
+    var choices_list = []
+    var choices = qn_object['choices']
+    for (const [key, value] of Object.entries(choices)) {
+      if (key == qn_object["answer"]) {
+        choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleRightAnswer} 
+                            correct_answer={true}/> )
+      }
+      else{
+        choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleWrongAnswer}
+                           correct_answer={false}/>)
+      }
+    }
+
+    this.setState({choices_list: choices_list});
   }
 
   render() {
-    // const current_question = this.props.current_question;
-    // var qn_object = this.getQuestion(current_question);
-    
+    //this.getQuestion(this.props.current_question)
+    console.log("props during render", this.props.current_question)
+
     return (
       <div>
-        {this.state.question_text} 
-
+        <div>{this.state.question_text} </div>
+        {this.state.choices_list}
       </div>
     )
   }
@@ -207,9 +211,13 @@ class ModifiableGameArea extends React.Component{
   goNextPlayerTurn(){
     var number_of_players = this.state.players.length -1;
     var tmp_current_player_id = this.state.current_player_id;
+
     if (this.state.current_player_id >= number_of_players){
+      
       this.setState({current_player_id: 0,
                      current_question: this.state.current_question +1  })
+      console.log("modifiablegamearea.state.current_question:", this.state.current_question)
+
     }
     else{
       this.setState({current_player_id: this.state.current_player_id + 1})
