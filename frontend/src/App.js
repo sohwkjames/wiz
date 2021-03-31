@@ -16,7 +16,6 @@ class PlayerRow extends React.Component{
   render(){
     var name = this.props.name
     var score = this.props.score
-    var player_row;
     if (this.props.current_player){
       return (
         <b><li>Player: {name}, Score: {score}</li></b>
@@ -56,7 +55,6 @@ class ChoiceButton extends React.Component{
   render(){
     var text = this.props.text
     var id = this.props.id
-    var player_row;
     if (this.props.correct_answer){
       return (
         <button onClick={this.props.handleClick}>{text}</button>
@@ -71,67 +69,16 @@ class ChoiceButton extends React.Component{
 }
 
 class QuestionArea extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      question_id: 1,
-      question_text: "tmp",
-      choices_list: [],
-      correct_choice: 0,
-    }
-    console.log("calling questionarea consturcor")
-    let current_question = this.props.current_question;
-    this.getQuestion(current_question);
-}
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.current_question !== prevProps.current_question) {
-      this.setState({question_id: this.props.current_question})
-    }
-}
-
-
-  getQuestion(qn_number){
-    // returns a json
-    console.log("this props current_question", this.props.current_question)
-    let url = "http://127.0.0.1:8000/question/" + qn_number + "/"
-    return fetch(url).then(response => response.json()).then(tmp => this.questionData(tmp));
-
-  }
-
-  questionData(qn_object){
-    // all of the data from question object should be contained in qn_object
-    // This function must set all the states. No state setting in render(). 
-
-    // create variables to set our qn_object
-    console.log("calling function questionData, this.props.current_question is:", this.props.current_question)
-    this.setState({ question_text: qn_object["question_text"],
-                    question_id: qn_object["id"], correct_choice: qn_object["answer"]})
-    
-    var choices_list = []
-    var choices = qn_object['choices']
-    for (const [key, value] of Object.entries(choices)) {
-      if (key == qn_object["answer"]) {
-        choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleRightAnswer} 
-                            correct_answer={true}/> )
-      }
-      else{
-        choices_list.push(<ChoiceButton text={value} handleClick={this.props.handleWrongAnswer}
-                           correct_answer={false}/>)
-      }
-    }
-
-    this.setState({choices_list: choices_list});
-  }
-
   render() {
-    //this.getQuestion(this.props.current_question)
-    console.log("props during render", this.props.current_question)
-
+    console.log("props passed to questionarea", this.props.question_object)
+    //let question_text = this.props.question_object["question_text"]
+    //console.log("props during render", this.props.current_question, question_text)
+    let question_text = this.props.question_object["question_text"]
+    let choices_list = this.props.question_object["choices_list"]
     return (
       <div>
-        <div>{this.state.question_text} </div>
-        {this.state.choices_list}
+        <div>{question_text} </div>
+        <ul>{choices_list}</ul>
       </div>
     )
   }
@@ -164,6 +111,7 @@ class ModifiableGameArea extends React.Component{
       game_started: false,
       current_player_id: 0,
       current_question: 1,
+      question_object: {"question_id":0, "choices_list": [], "question_text":"as", "correct_choice":1},
     }
     this.handleAddPlayerClick = this.handleAddPlayerClick.bind(this);
     this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
@@ -173,7 +121,7 @@ class ModifiableGameArea extends React.Component{
     this.handleWrongAnswer = this.handleWrongAnswer.bind(this);
     this.goNextPlayerTurn = this.goNextPlayerTurn.bind(this);
     this.testAlert = this.testAlert.bind(this);
-
+    this.getQuestion(this.state.current_question)
   }
 
   handleAddPlayerClick(){
@@ -198,40 +146,74 @@ class ModifiableGameArea extends React.Component{
   }
 
   handleWrongAnswer(){
-    alert ("wrong answer")
     this.goNextPlayerTurn();
   }
 
   handleRightAnswer(){
-    alert ("handling Right answer")
     this.addPointToPlayer();
     this.goNextPlayerTurn();
   }
 
   goNextPlayerTurn(){
     var number_of_players = this.state.players.length -1;
-    var tmp_current_player_id = this.state.current_player_id;
+    // var tmp_current_player_id = this.state.current_player_id;
 
     if (this.state.current_player_id >= number_of_players){
-      
-      this.setState({current_player_id: 0,
-                     current_question: this.state.current_question +1  })
-      console.log("modifiablegamearea.state.current_question:", this.state.current_question)
+      console.log("Before increment current_question, current question is", this.state.current_question)
 
+      // Why we pass a functino into setState?
+      // setState is asynchronous. We want to ensure that setState fully returns, before calling a function.
+      let new_question_number = this.state.current_question + 1
+      this.setState({current_player_id: 0,
+                     current_question: new_question_number}, 
+                     function() {this._handleGetQuestion()})
+
+      console.log("After increment current_question", this.state.current_question)        
     }
     else{
       this.setState({current_player_id: this.state.current_player_id + 1})
     }
-    
+  }
+
+  _handleGetQuestion(){
+    this.getQuestion(this.state.current_question)
   }
 
   addPointToPlayer(){
     var newArray = this.state.players.slice() // get a copy of the players array.
-    console.log("newArray array:")
-    console.log(newArray)
     newArray[this.state.current_player_id]["score"] += 1
     this.setState({players: newArray})
   }
+
+  getQuestion(qn_number){
+    // returns a json
+    console.log("Calling getQuestion with", qn_number)
+    let url = "http://127.0.0.1:8000/question/" + qn_number + "/"
+    return fetch(url).then(response => response.json()).then(tmp => this.questionData(tmp));
+  }
+
+  questionData(qn_object){
+    // should update this.question_object
+    // long step to create choices list and update this.question_object['choices_list]
+    var choices_list = []
+    var choices = qn_object['choices']
+    for (const [key, value] of Object.entries(choices)) {
+      if (key == qn_object["answer"]) {
+        choices_list.push(<ChoiceButton text={value} handleClick={this.handleRightAnswer} 
+                            correct_answer={true}/> )
+      }
+      else{
+        choices_list.push(<ChoiceButton text={value} handleClick={this.handleWrongAnswer}
+                           correct_answer={false}/>)
+      }
+    }
+
+    let tmp_object = {"question_id":qn_object["id"], "choices_list":choices_list, "question_text":qn_object["question_text"],
+                  "correct_choice":qn_object["answer"]            
+                  }
+    this.setState({ question_object: tmp_object});
+  }
+
 
   // Add question. Play 
   render() {
@@ -242,7 +224,8 @@ class ModifiableGameArea extends React.Component{
       question_area = <QuestionArea current_question={this.state.current_question}
                         handleRightAnswer={this.handleRightAnswer}
                         handleWrongAnswer={this.handleWrongAnswer} 
-                        current_player_id={this.state.current_player_id}/>
+                        current_player_id={this.state.current_player_id}
+                        question_object={this.state.question_object}/>
     }
     else{
       question_area = null;
