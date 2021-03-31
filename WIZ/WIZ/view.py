@@ -18,18 +18,25 @@ def detail(request, question_id):
         question = Question.objects.get(pk=question_id)
         test = question.choice_set.all()
         choiceJson = {}
-        
+        i = 1
         for choice in test:
             choiceName = choice.choice_text
             choiceNumber = choice.choice_number
             print(choiceName)
             conver_num = str(choiceNumber)
-            choiceJson[conver_num] = choiceName
+            choiceJson[choiceNumber] = choiceName
             
+        choiceJsonSorted = {}
+        for choice in choiceJson:
+            choiceJsonSorted[i] = choiceJson[i]
+            i = i + 1
+        
         print(choiceJson)
+        print("   ")
+        print(choiceJsonSorted)
         questionJson = {'id': question_id, \
         'question_text': question.question_text, \
-        'choices': choiceJson, \
+        'choices': choiceJsonSorted, \
         'answer': question.answer}
         print(questionJson)
     except Question.DoesNotExist:
