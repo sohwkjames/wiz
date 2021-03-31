@@ -21,14 +21,22 @@ def detail(request, question_id):
         i = 1
         for choice in test:
             choiceName = choice.choice_text
+            choiceNumber = choice.choice_number
             print(choiceName)
-            conver_num = str(i)
-            choiceJson[conver_num] = choiceName
+            conver_num = str(choiceNumber)
+            choiceJson[choiceNumber] = choiceName
+            
+        choiceJsonSorted = {}
+        for choice in choiceJson:
+            choiceJsonSorted[i] = choiceJson[i]
             i = i + 1
+        
         print(choiceJson)
+        print("   ")
+        print(choiceJsonSorted)
         questionJson = {'id': question_id, \
         'question_text': question.question_text, \
-        'choices': choiceJson, \
+        'choices': choiceJsonSorted, \
         'answer': question.answer}
         print(questionJson)
     except Question.DoesNotExist:
