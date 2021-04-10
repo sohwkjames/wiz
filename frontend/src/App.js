@@ -30,6 +30,7 @@ class PlayerRow extends React.Component{
 }
 
 class PlayerList extends React.Component{
+  // player objects keys: key, name, score, current_player}
     render() {
       const current_player_id = this.props.current_player_id;  
       const players = this.props.players
@@ -70,14 +71,13 @@ class ChoiceButton extends React.Component{
 
 class QuestionArea extends React.Component {
   render() {
-    console.log("props passed to questionarea", this.props.question_object)
-    //let question_text = this.props.question_object["question_text"]
-    //console.log("props during render", this.props.current_question, question_text)
     let question_text = this.props.question_object["question_text"]
     let choices_list = this.props.question_object["choices_list"]
+    
+    let question_number_text = this.props.question_object["question_id"] + ") "
     return (
       <div>
-        <div>{question_text} </div>
+        <div>{question_number_text} {question_text} </div>
         <ul>{choices_list}</ul>
       </div>
     )
@@ -97,6 +97,32 @@ class AddPlayerBar extends React.Component{
   }
 }
 
+class GameOverArea extends React.Component{
+  // props:
+  // players: array of player objects.
+  render() {
+    let player_array = this.props.players
+    // rearrange the player array descending from score
+    let sorted_player_array = player_array.sort(function sort_players(a,b) {
+      return b.score < a.score ? -1
+            : b.score > a.score ? 1
+            : 0;
+    })
+    var listitems = []
+    sorted_player_array.forEach((player) => {
+      listitems.push(<PlayerRow key={player.id} name={player.name} score={player.score} current_player={true}/>)
+    })
+    var winning_player = sorted_player_array[0].name
+    return (
+      <div>
+      <p>Winner: {winning_player}</p>
+      <ul></ul>{listitems}
+      </div>
+    )
+  }
+
+}
+
 class ModifiableGameArea extends React.Component{
   // This is the top most object, and will hold some state.
 
@@ -112,6 +138,7 @@ class ModifiableGameArea extends React.Component{
       current_player_id: 0,
       current_question: 1,
       question_object: {"question_id":0, "choices_list": [], "question_text":"as", "correct_choice":1},
+      game_over: false,
     }
     this.handleAddPlayerClick = this.handleAddPlayerClick.bind(this);
     this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
@@ -120,8 +147,12 @@ class ModifiableGameArea extends React.Component{
     this.handleRightAnswer = this.handleRightAnswer.bind(this);
     this.handleWrongAnswer = this.handleWrongAnswer.bind(this);
     this.goNextPlayerTurn = this.goNextPlayerTurn.bind(this);
-    this.testAlert = this.testAlert.bind(this);
+    this.toggleGameOver = this.toggleGameOver.bind(this);
     this.getQuestion(this.state.current_question)
+  }
+
+  toggleGameOver(){
+    this.setState({ game_over: true })
   }
 
   handleAddPlayerClick(){
@@ -157,10 +188,7 @@ class ModifiableGameArea extends React.Component{
   goNextPlayerTurn(){
     var number_of_players = this.state.players.length -1;
     // var tmp_current_player_id = this.state.current_player_id;
-
     if (this.state.current_player_id >= number_of_players){
-      console.log("Before increment current_question, current question is", this.state.current_question)
-
       // Why we pass a functino into setState?
       // setState is asynchronous. We want to ensure that setState fully returns, before calling a function.
       let new_question_number = this.state.current_question + 1
@@ -168,7 +196,6 @@ class ModifiableGameArea extends React.Component{
                      current_question: new_question_number}, 
                      function() {this._handleGetQuestion()})
 
-      console.log("After increment current_question", this.state.current_question)        
     }
     else{
       this.setState({current_player_id: this.state.current_player_id + 1})
@@ -187,9 +214,10 @@ class ModifiableGameArea extends React.Component{
 
   getQuestion(qn_number){
     // returns a json
-    console.log("Calling getQuestion with", qn_number)
     let url = "http://127.0.0.1:8000/question/" + qn_number + "/"
-    return fetch(url).then(response => response.json()).then(tmp => this.questionData(tmp));
+    let tester = fetch(url).then(response => response.json()).then(tmp => this.questionData(tmp)).catch(error => this.toggleGameOver());
+    return tester
+    // return fetch(url).then(response => response.json()).then(tmp => this.questionData(tmp));
   }
 
   questionData(qn_object){
@@ -218,8 +246,12 @@ class ModifiableGameArea extends React.Component{
   // Add question. Play 
   render() {
     const game_started = this.state.game_started;
+    const game_over = this.state.game_over;
     let question_area;
     let add_player_bar;
+    let game_over_area;
+    let player_list = <PlayerList players={this.state.players} current_player_id={this.state.current_player_id}/>
+
     if (game_started){
       question_area = <QuestionArea current_question={this.state.current_question}
                         handleRightAnswer={this.handleRightAnswer}
@@ -231,11 +263,21 @@ class ModifiableGameArea extends React.Component{
       question_area = null;
       add_player_bar = <AddPlayerBar handleOnChange={this.handlePlayerNameChange} handleOnClick={this.handleAddPlayerClick} onStartGame={this.handleStartGame}/>
     }
+
+    if (game_over){
+      question_area = null
+      // create a game over area component
+      add_player_bar = null;
+      player_list = null;
+      game_over_area = <GameOverArea players={this.state.players} />
+    }
+
     return (
       <div>
         {add_player_bar}
-        <PlayerList players={this.state.players} current_player_id={this.state.current_player_id}/>
+        {player_list}
         {question_area}
+        {game_over_area}
       </div>
     )
   }
