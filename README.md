@@ -12,7 +12,7 @@
 
 ## Intro
 
-> In order to start the code, you need to get the backend and frontend running
+> In order to start WIZ, you need to get the backend and frontend running
 
 ## Backend
 
