@@ -1,6 +1,6 @@
 Setting up
 
-Install react with  
+> Install react with  
 npm install -g create-react-app  
 python -m pip install Django  
 python -m pip install django-cors-headers  
